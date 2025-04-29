@@ -35,3 +35,13 @@ export const authMiddleware = async (req, res, next) => {
     });
   }
 };
+
+export const isAdmin = async (req, res, next) => {
+  if (req.user.role !== "ADMIN") {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized - Admin required",
+    });
+  }
+  next();
+};
