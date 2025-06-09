@@ -49,7 +49,7 @@ model Problem {
   constraints Json
   hints       String?
   editorial   String?
-  userId      String
+  userId      String  
 
   testCases          Json
   codeSnippets       Json
