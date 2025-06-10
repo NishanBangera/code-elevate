@@ -233,3 +233,43 @@ export const deleteProblem = async (req, res) => {
     });
   }
 };
+
+export const getSolvedProblemsByUserId = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const problems = await prisma.problem.findMany({
+            where: {
+              problemSolved: {
+                some: {
+                  userId,
+                },
+              },
+            },
+            include: {
+                problemSolved: {
+                    select: {
+                        userId: true,
+                    },
+                },
+            }
+        });
+        if (!problems) {
+            return res.status(404).json({
+                success: false,
+                message: "No problems found",
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Solved problems fetched successfully",
+            problems,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error fetching solved problems",
+            error: error.message,
+        });
+    }
+}
+
