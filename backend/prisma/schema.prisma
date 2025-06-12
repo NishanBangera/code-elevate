@@ -26,17 +26,18 @@ enum Difficulty {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  name        String?
-  email       String       @unique
-  password    String
-  image       String?
-  role        UserRole     @default(USER)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  problems    Problem[]
-  submissions Submission[]
+  id            String          @id @default(uuid())
+  name          String?
+  email         String          @unique
+  password      String
+  image         String?
+  role          UserRole        @default(USER)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  problems      Problem[]
+  submissions   Submission[]
   problemSolved ProblemSolved[]
+  bookmarks     Bookmark[]
 }
 
 model Problem {
@@ -49,7 +50,7 @@ model Problem {
   constraints Json
   hints       String?
   editorial   String?
-  userId      String  
+  userId      String
 
   testCases          Json
   codeSnippets       Json
@@ -58,9 +59,10 @@ model Problem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  submissions Submission[]
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submissions   Submission[]
   problemSolved ProblemSolved[]
+  bookmarks     Bookmark[]      @relation("BookmarkProblems")
 }
 
 model Submission {
@@ -105,7 +107,7 @@ model TestcaseResult {
 }
 
 model ProblemSolved {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   problemId String
   userId    String
   createdAt DateTime @default(now())
@@ -115,4 +117,17 @@ model ProblemSolved {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([problemId, userId])
+}
+
+model Bookmark {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  problems    Problem[] @relation("BookmarkProblems")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([name, userId])
 }
